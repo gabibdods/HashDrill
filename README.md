@@ -1,132 +1,174 @@
-# ⚡ EcoMiner — Energy-Efficient CPU Mining Framework (C-based)
+# HashDrill
 
-EcoMiner is a lightweight, energy-aware mining system written in C, focused on optimizing power consumption across CPUs — especially ARM SoCs and low-power devices. Inspired by modern PoW alternatives like **RandomX** and **Chia**, it balances performance, sustainability, and practicality while supporting real-world mining or verification tasks.
+# Energy-Efficient CPU Mining Framework
 
----
+### Description
 
-## 🔍 Problem Statement
-
-Traditional mining applications (e.g., Bitcoin’s SHA-256 miners) are extremely inefficient, wasting enormous amounts of power and hardware resources. There’s a growing need to:
-
-- Develop **low-power mining alternatives**
-- Target **general-purpose CPUs** over energy-hungry GPUs/ASICs
-- Explore the use of **low-level hardware optimizations**
-- Design for **cross-platform compatibility**, especially ARM
-
-EcoMiner is built to fulfill this niche, enabling efficient, ethical CPU-based mining or validation tasks on desktop and embedded systems.
+- A lightweight, cross-platform CPU mining framework written in C with a focus on energy efficiency, hardware awareness, and sustainability
+- EcoMiner targets general-purpose processors (especially ARM SoCs) and applies techniques like SIMD, cache optimization, and dynamic scaling to mine or validate with low power consumption
 
 ---
 
-## 🎯 Project Goals
+## NOTICE
 
-- ✅ Implement an **energy-efficient mining algorithm** (e.g. RandomX or similar)
-- ✅ Target low-power CPUs (ARM/x86_64) with **platform-optimized code**
-- ✅ Write the miner in **pure C** for maximum control and performance
-- ✅ Use **SIMD, cache awareness, and thread affinity** to optimize throughput
-- ✅ Allow auto-scaling based on temperature, battery level, and system load
-- ✅ Optionally integrate with **green cloud backends** for leaderboards or verification APIs
+- Please read through this `README.md` to better understand the project's source code and setup instructions
+- Also, make sure to review the contents of the `License/` directory
+- Your attention to these details is appreciated — enjoy exploring the project!
 
 ---
 
-## 🛠️ Tools & Technology Stack
+## Problem Statement
 
-| Layer             | Choice / Tech                               |
-|-------------------|----------------------------------------------|
-| 🔤 Language        | **C** (low-level efficiency, portable)       |
-| ⚙️ Algorithm       | **RandomX**-like CPU mining loop             |
-| 🧠 Optimizations   | SIMD (AVX2, SSE, NEON), thread pinning       |
-| 🎯 Target HW       | **ARM CPUs**, Raspberry Pi, mobile SoCs      |
-| 🖥 OS Support      | **Linux** (main), Android (optional)         |
-| 🔋 Power Scaling   | DVFS (Dynamic Voltage/Frequency Scaling)     |
-| 🌱 Backend Infra   | Python + FastAPI on **green cloud host**     |
+- Traditional proof-of-work mining solutions waste significant power on GPU or ASIC computation
+- EcoMiner addresses this by offering a CPU-centric, energy-aware alternative that runs efficiently on ARM or x86 CPUs, using C-level optimizations for performance and minimal thermal/power impact
 
 ---
 
-## 🧩 Design Decisions
+## Project Goals
 
-- Used **C** to gain full control over memory usage, threading, and instruction-level performance.
-- Prioritized **RandomX-style CPU mining** for its compatibility with low-cost general-purpose processors.
-- Focused on **non-GPU computation** to ensure accessibility and reduce power use.
-- Added system hooks for **dynamic scaling**, **thermal throttling**, and **idle pausing**.
-- Designed the miner to store most data in **RAM** to reduce memory-bound stalls and I/O usage.
+### Energy-Aware Mining Loop
 
----
+- Design and implement an efficient, RandomX-style memory-hard mining algorithm optimized for CPU execution
 
-## ⚔️ Challenges & Solutions
+### Low-Level Optimization
 
-| Challenge                                | Solution                                                                |
-|-----------------------------------------|-------------------------------------------------------------------------|
-| Excessive power use with naive loops     | Replaced SHA loops with memory-hard RandomX-like hash traversal         |
-| Cache thrashing on multi-core CPUs       | Used thread pinning and memory alignment to reduce L1/L2 contention     |
-| Scaling for mobile devices               | Used Linux DVFS APIs to lower frequency under load                      |
-| High instruction overhead                | Rewrote key paths with SIMD intrinsics (e.g. AVX2, NEON)                |
-| Unsafe mining on battery or high temps   | Added temp monitor + auto-throttle daemon                              |
+- Use C for complete control, targeting thread pinning, SIMD vectorization, and hardware-aware computation
 
 ---
 
-## 📚 Lessons Learned
+## Tools, Materials & Resources
 
-- Learned to write **SIMD-optimized C** for real-world cryptographic workloads
-- Gained experience in **cross-compiling C for ARM**, especially for Raspberry Pi and Android
-- Understood the importance of **cache-aware memory access and CPU scheduling**
-- Discovered how to build **dynamic system-level power monitoring and throttling hooks**
-- Practiced building **modular C programs** ready for Docker or embedded use
+### Tools
+
+- C compiler with SIMD support (e.g., GCC/Clang with AVX2 or NEON), Python (for optional backend server)
+
+### Materials
+
+- ARM development board (e.g., Raspberry Pi 4), Thermal and power sensors (Linux APIs)
+
+### Resources
+
+- Linux DVFS interface documentation, FastAPI docs for backend integration
 
 ---
 
-## 🖥️ Architecture Overview
+## Design Decision
+
+### Language Selection
+
+- Chose C for direct control over threading, memory, and CPU-specific optimizations
+
+### Architecture Compatibility
+
+- Targeted x86_64 and ARMv7/v8 using portable compiler flags and preprocessor detection
+
+### Power Scaling Hooks
+
+- Integrated Linux DVFS APIs and thermal monitoring to dynamically adapt miner workload
+
+---
+
+## Features
+
+### SIMD Optimization
+
+- Accelerated hash loops using AVX2, SSE, or NEON intrinsics
+
+### Adaptive Workload Management
+
+- Auto-throttling and scaling based on battery level, temperature, or system load
+
+### Cross-Platform Execution
+
+- Designed to work on desktops, laptops, and embedded ARM devices with minimal setup
+
+---
+
+## Block Diagram
 
 ```plaintext
-           +-----------------------------+
-           |     EcoMiner CLI App        |
-           |-----------------------------|
-           | - C Mining Core             |
-           | - Optimized Hash Loop       |
-           | - SIMD Intrinsics           |
-           | - Thread Pinning Engine     |
-           | - Thermal & Power Monitor   |
-           +-------------+---------------+
-                         |
-     +-------------------v-------------------+
-     |         Device Hardware (CPU)         |
-     | - x86_64 or ARM (Raspberry Pi, SoC)   |
-     | - DVFS & Temp Sensors (Linux APIs)    |
-     +-------------------+-------------------+
-                         |
-      (Optional API reporting for backend stats)
-                         |
-     +-------------------v-------------------+
-     |    Python FastAPI Backend (Green Host)|
-     | - Device Reporting                    |
-     | - Task Distribution                   |
-     | - Leaderboards                        |
-     +---------------------------------------+
+                         ┌───────────────────────────────┐
+                         │      EcoMiner CLI Tool        │
+                         │-------------------------------│
+                         │ - Optimized Hash Core (C)     │
+                         │ - SIMD/Thread Pinned Loops    │
+                         │ - Power + Temp Monitor        │
+                         └──────┬───────────────┬────────┘
+                                │               │
+                   ┌───────────▼───────┐   ┌────▼───────────┐
+                   │   CPU (ARM/x86)   │   │   Sensors/API  │
+                   │ - L1/L2 Caches    │   │ - Thermal Zones│
+                   │ - SIMD Extensions │   │ - DVFS Scaling │
+                   └──────────┬────────┘   └────────────────┘
+                              │
+                  Optional Network Sync & Stats API
+                              │
+                 ┌────────────▼────────────┐
+                 │   FastAPI Server (opt)  │
+                 │ - Leaderboard Reports   │
+                 │ - Device Metrics View   │
+                 └─────────────────────────┘
+				 
+```
+
+---
+
+## Functional Overview
+
+- Launch via command-line and automatically detect CPU features
+- Start randomized mining workload across threads pinned to physical cores
+- Monitor system temperature and scale frequency or pause under load
+- Report metrics to a green backend or display local stats
+
+---
+
+## Challenges & Solutions
+
+### Power-Hungry Loops
+
+- Replaced traditional hash functions with memory-bound, cache-aware RandomX logic
+
+### Cache Contention on Multicore CPUs
+
+- Introduced thread affinity with aligned data structures to avoid thrashing
+
+---
+
+## Lessons Learned
+
+### SIMD Programming in C
+
+- Learned how to write vectorized code paths for AVX2 and NEON to gain measurable performance improvements
+
+### Power & Thermal Adaptation
+
+- Integrated dynamic throttling based on system metrics and Linux interfaces for energy savings
+
+---
+
+## Project Structure
+
+```plaintext
+root/
+├── License/
+│   ├── LICENSE.md
+│   │
+│   └── NOTICE.md
+│
+├── .gitattributes
+│
+├── .gitignore
+│
+└── README.md
 
 ```
 
 ---
 
-## 🔧 Features
-- ⛏ Efficient mining using CPU cache, RAM, and registers
-- 🧠 Thread affinity and scheduler hints to avoid context switching
-- 🔥 Auto-throttle based on CPU temperature
-- 🔋 Optional battery-awareness for laptop/mobile use
-- 📡 Optional backend sync for stats and leaderboards
-- 📦 Quick Start
+## Future Enhancements
 
----
-
-## 🔐 Legal & Ethical Guidelines
-- ✅ Do not mine on user systems without full consent.
-- ⚠️ Verify the local legality of mining activities.
-- ⚡ Respect grid limitations and avoid strain during peak hours.
-- ✅ Offer opt-in toggle for any UI or embedded application usage.
-
----
-
-## 💡 Future Enhancements
-- Build a web dashboard for real-time power stats and hash rates
-- Support Proof-of-Space or hybrid algorithms (Chia-style)
-- Add Docker Compose setup with backend server and remote miner clients
-- Add support for ARMv9 and custom NEON optimization profiles
-- Run on solar-powered Raspberry Pi nodes for full eco mining demo
+- Integrate Proof-of-Space variant for hybrid mining
+- Build a real-time dashboard using WebSockets and FastAPI
+- Add automatic deployment with Docker Compose for miner + backend
+- Support new CPU extensions (e.g. ARMv9 SVE)
+- Enable solar-powered mining mode with energy-harvesting awareness
