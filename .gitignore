@@ -10,3 +10,6 @@
 
 
 # particular repository ignores:
+
+!CMakeLists.txt
+!main.c
